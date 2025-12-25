@@ -133,7 +133,7 @@ export default function Navigation() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9998] lg:hidden"
+              className="fixed inset-0 bg-black/30 backdrop-blur-2xl z-[9998] lg:hidden"
               onClick={() => setIsOpen(false)}
             />
 
@@ -143,17 +143,17 @@ export default function Navigation() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 250 }}
-              className="fixed right-0 top-0 bottom-12 w-[min(85vw,380px)] bg-[#020305] border-l-2 border-crimson/40 z-[9999] lg:hidden overflow-hidden flex flex-col"
-              style={{ boxShadow: '-8px 0 48px rgba(0, 0, 0, 0.9), -2px 0 16px rgba(196, 30, 58, 0.3)' }}
+              className="fixed right-0 top-0 bottom-4 w-[min(50vw,420px)] min-w-[240px] bg-[#010203] border-l-2 border-crimson/40 z-[9999] lg:hidden flex flex-col"
+              style={{ boxShadow: '-10px 0 50px rgba(0, 0, 0, 0.9), -2px 0 18px rgba(196, 30, 58, 0.25)' }}
               id="mobile-menu"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-crimson/30 bg-[#03050a]">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-crimson/30 bg-[#020309]">
                 <div className="text-[10px] tracking-[0.4em] text-gray-600 code-font">NAV.SYSTEM</div>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 border border-crimson/50 bg-crimson/10 text-crimson-bright text-xs code-font tracking-widest hover:bg-crimson/20 transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 border border-crimson/50 bg-[#0b0f14]/80 text-crimson-bright text-xs code-font tracking-widest hover:border-crimson/70 transition-colors"
                 >
                   <svg className="h-3.5 w-3.5" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -163,7 +163,8 @@ export default function Navigation() {
               </div>
 
               {/* Navigation Links */}
-              <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2 custom-scrollbar">
+              <div className="relative flex-1 px-3 py-4 space-y-2">
+                <div className="pointer-events-none absolute inset-0 z-0 bg-black/20 backdrop-blur-md" />
                 {navItems.map((item, index) => {
                   const isActive = pathname === item.path
                   return (
@@ -172,14 +173,15 @@ export default function Navigation() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.06 }}
+                      className="relative z-10"
                     >
                       <Link
                         href={item.path}
                         onClick={() => setIsOpen(false)}
-                        className={`block px-4 py-3 border transition-all code-font text-sm tracking-wider ${
+                        className={`block px-4 py-2.5 border transition-all code-font text-sm tracking-wider ${
                           isActive
-                            ? 'border-crimson/60 bg-crimson/10 text-crimson-bright shadow-[inset_0_0_12px_rgba(196,30,58,0.15)]'
-                            : 'border-crimson/25 bg-[#05080d]/80 text-gray-400 hover:border-crimson/50 hover:text-crimson-bright hover:bg-[#080c12]'
+                            ? 'border-crimson/60 bg-[#0b0f14]/90 text-crimson-bright shadow-[inset_0_0_12px_rgba(196,30,58,0.15)]'
+                            : 'border-crimson/25 bg-[#04070c]/90 text-gray-400 hover:border-crimson/50 hover:text-crimson-bright hover:bg-[#070b11]'
                         }`}
                       >
                         <div className="flex items-center justify-between">
@@ -195,7 +197,7 @@ export default function Navigation() {
               </div>
 
               {/* Footer Status */}
-              <div className="border-t border-crimson/30 px-4 py-3 bg-[#03050a] text-[9px] code-font text-gray-600 space-y-1">
+              <div className="border-t border-crimson/30 px-4 py-3 bg-[#020309] text-[9px] code-font text-gray-600 space-y-1">
                 <div className="flex justify-between">
                   <span>STATUS</span>
                   <span className="text-crimson-bright">ONLINE</span>
@@ -209,22 +211,6 @@ export default function Navigation() {
           </>
         )}
       </AnimatePresence>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(10, 14, 20, 0.3);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(196, 30, 58, 0.4);
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(196, 30, 58, 0.6);
-        }
-      `}</style>
     </nav>
   )
 }

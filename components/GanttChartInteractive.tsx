@@ -123,13 +123,13 @@ export default function GanttChartInteractive() {
         <div>
           <DecryptText
             text=">>>_DEVELOPMENT.TIMELINE"
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-crimson-bright text-glow mb-2 code-font leading-tight max-w-[16ch] sm:max-w-none"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-crimson-bright text-glow mb-2 code-font leading-tight max-w-[16ch] sm:max-w-none break-words"
             as="h2"
             speed={40}
           />
           <DecryptText
             text="tracking.progress.in_real-time"
-            className="text-gray-400 code-font text-xs sm:text-sm"
+            className="text-gray-400 code-font text-xs sm:text-sm break-words"
             as="p"
             speed={25}
           />

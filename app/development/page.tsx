@@ -4,75 +4,250 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import GanttChartInteractive from '@/components/GanttChartInteractive'
 import DecryptText from '@/components/DecryptText'
+import FocusCardGrid, { type FocusCard } from '@/components/FocusCardGrid'
+
+type ProjectCategory = 'all' | 'main' | 'complete' | 'tools'
+
+type ProjectCard = FocusCard & {
+  category: Exclude<ProjectCategory, 'all'>
+}
+
+const projectCards: ProjectCard[] = [
+  {
+    id: 'synthetics',
+    title: 'Synthetics',
+    sector: 'PROJECT.MAIN',
+    summary: 'Fast-paced tactical shooter with quantum mechanics that let players manipulate time and space.',
+    tags: ['UNREAL', 'C++', 'MULTIPLAYER'],
+    stats: [
+      { label: 'STATUS', value: 'IN_DEV' },
+      { label: 'PROGRESS', value: '65%' },
+      { label: 'YEAR', value: '2024' },
+    ],
+    details: [
+      'Quantum abilities tied to stamina and cooldown loops.',
+      'Extraction zones rotate with faction heat levels.',
+      'Netcode tuning for 60 tick combat sessions.',
+    ],
+    code: 'PRJ-01',
+    accent: '#e63946',
+    accentSoft: 'rgba(230, 57, 70, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+      </svg>
+    ),
+    meta: [
+      { label: 'STATUS', value: 'IN_DEVELOPMENT' },
+      { label: 'CATEGORY', value: 'MAIN' },
+    ],
+    category: 'main',
+  },
+  {
+    id: 'neon-runner',
+    title: 'Neon Runner',
+    sector: 'PROJECT.COMPLETE',
+    summary: 'Cyberpunk endless runner with procedural lanes and dynamic difficulty scaling.',
+    tags: ['UNITY', 'C#', 'MOBILE'],
+    stats: [
+      { label: 'STATUS', value: 'RELEASED' },
+      { label: 'PROGRESS', value: '100%' },
+      { label: 'YEAR', value: '2024' },
+    ],
+    details: [
+      'Procedural lane hazards with reactive pickups.',
+      'New neon districts and unlockable runners.',
+      'Mobile input tuned for swipe precision.',
+    ],
+    code: 'PRJ-02',
+    accent: '#f97316',
+    accentSoft: 'rgba(249, 115, 22, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 12h16" />
+        <path d="M14 6l6 6-6 6" />
+      </svg>
+    ),
+    meta: [
+      { label: 'STATUS', value: 'RELEASED' },
+      { label: 'CATEGORY', value: 'COMPLETE' },
+    ],
+    category: 'complete',
+  },
+  {
+    id: 'custom-engine',
+    title: 'Custom Game Engine',
+    sector: 'PROJECT.TOOLS',
+    summary: 'Custom engine with modern rendering, asset tooling, and scalable runtime systems.',
+    tags: ['C++', 'VULKAN', 'ENGINE'],
+    stats: [
+      { label: 'STATUS', value: 'IN_DEV' },
+      { label: 'PROGRESS', value: '45%' },
+      { label: 'YEAR', value: '2024' },
+    ],
+    details: [
+      'Render graph with PBR and lighting passes.',
+      'Entity component system for large scenes.',
+      'Hot reload tooling and profiling overlays.',
+    ],
+    code: 'PRJ-03',
+    accent: '#4f9cfb',
+    accentSoft: 'rgba(79, 156, 251, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="6" y="6" width="12" height="12" rx="2" />
+        <path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" />
+      </svg>
+    ),
+    meta: [
+      { label: 'STATUS', value: 'IN_DEVELOPMENT' },
+      { label: 'CATEGORY', value: 'TOOLS' },
+    ],
+    category: 'tools',
+  },
+  {
+    id: 'medieval-tactics',
+    title: 'Medieval Tactics',
+    sector: 'PROJECT.COMPLETE',
+    summary: 'Turn-based strategy game with advanced AI and procedural campaign generation.',
+    tags: ['UNITY', 'STRATEGY', 'AI'],
+    stats: [
+      { label: 'STATUS', value: 'RELEASED' },
+      { label: 'PROGRESS', value: '100%' },
+      { label: 'YEAR', value: '2023' },
+    ],
+    details: [
+      'Adaptive AI with morale and flank systems.',
+      'Procedural campaigns with branching objectives.',
+      'Accessibility pass for UI and controls.',
+    ],
+    code: 'PRJ-04',
+    accent: '#3ddc97',
+    accentSoft: 'rgba(61, 220, 151, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4z" />
+      </svg>
+    ),
+    meta: [
+      { label: 'STATUS', value: 'RELEASED' },
+      { label: 'CATEGORY', value: 'COMPLETE' },
+    ],
+    category: 'complete',
+  },
+]
+
+const projectFilters: Array<{ id: ProjectCategory; label: string }> = [
+  { id: 'all', label: 'ALL' },
+  { id: 'main', label: 'MAIN' },
+  { id: 'complete', label: 'COMPLETE' },
+  { id: 'tools', label: 'TOOLS' },
+]
+
+const updateCards: FocusCard[] = [
+  {
+    id: 'beta-wave',
+    title: 'Synthetics Multiplayer Beta',
+    sector: 'UPDATE.DEC.2024',
+    summary: 'Closed beta launched with 500 players and performance optimization underway.',
+    tags: ['BETA', 'NETCODE', 'STRESS'],
+    stats: [
+      { label: 'PLAYERS', value: '500' },
+      { label: 'BUILD', value: 'BETA' },
+      { label: 'FOCUS', value: 'PERF' },
+    ],
+    details: [
+      'Regional matchmaking queues validated under load.',
+      'Server tick stability measured across peaks.',
+      'Latency routing tuned for rollback safety.',
+    ],
+    code: 'UPD-01',
+    accent: '#e63946',
+    accentSoft: 'rgba(230, 57, 70, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="6" cy="12" r="2" />
+        <circle cx="18" cy="7" r="2" />
+        <circle cx="18" cy="17" r="2" />
+        <path d="M8 12h8M8.5 11l8-4M8.5 13l8 4" />
+      </svg>
+    ),
+    meta: [
+      { label: 'DATE', value: 'DEC.2024' },
+      { label: 'CHANNEL', value: 'BETA' },
+    ],
+  },
+  {
+    id: 'post-launch',
+    title: 'Neon Runner Post-Launch Update',
+    sector: 'UPDATE.NOV.2024',
+    summary: 'Major content drop with new levels and improved mobile controls.',
+    tags: ['PATCH', 'MOBILE', 'LEVELS'],
+    stats: [
+      { label: 'BUILD', value: '1.4' },
+      { label: 'PLATFORM', value: 'MOBILE' },
+      { label: 'IMPACT', value: 'UX' },
+    ],
+    details: [
+      'New neon districts with expanded route variety.',
+      'Input latency fixes on Android devices.',
+      'Difficulty pacing tuned from player feedback.',
+    ],
+    code: 'UPD-02',
+    accent: '#f97316',
+    accentSoft: 'rgba(249, 115, 22, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 12h10" />
+        <path d="M10 6l6 6-6 6" />
+        <circle cx="19" cy="12" r="2" />
+      </svg>
+    ),
+    meta: [
+      { label: 'DATE', value: 'NOV.2024' },
+      { label: 'CHANNEL', value: 'PATCH' },
+    ],
+  },
+  {
+    id: 'engine-milestone',
+    title: 'Engine Development Milestone',
+    sector: 'UPDATE.OCT.2024',
+    summary: 'Custom engine now supports PBR rendering and real-time global illumination.',
+    tags: ['RENDER', 'TOOLS', 'PBR'],
+    stats: [
+      { label: 'FEATURE', value: 'GI' },
+      { label: 'STATUS', value: 'LIVE' },
+      { label: 'FOCUS', value: 'RENDER' },
+    ],
+    details: [
+      'PBR pipeline validated with cinematic passes.',
+      'Asset import path stabilized for teams.',
+      'Benchmarks improved on mid-tier hardware.',
+    ],
+    code: 'UPD-03',
+    accent: '#4f9cfb',
+    accentSoft: 'rgba(79, 156, 251, 0.18)',
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 6h16v12H4z" />
+        <path d="M8 10h8M8 14h6" />
+      </svg>
+    ),
+    meta: [
+      { label: 'DATE', value: 'OCT.2024' },
+      { label: 'CHANNEL', value: 'ENGINE' },
+    ],
+  },
+]
 
 export default function Development() {
   const [activeTab, setActiveTab] = useState<'projects' | 'timeline' | 'updates'>('timeline')
-  const [filter, setFilter] = useState('all')
-
-  const projects = [
-    {
-      id: 1,
-      title: 'SYNTHETICS',
-      category: 'main',
-      status: 'In Development',
-      tags: ['Unreal Engine', 'C++', 'Multiplayer'],
-      description: 'Fast-paced tactical shooter with unique quantum mechanics allowing players to manipulate time and space.',
-      progress: 65,
-      year: '2024',
-    },
-    {
-      id: 2,
-      title: 'NEON RUNNER',
-      category: 'complete',
-      status: 'Released',
-      tags: ['Unity', 'C#', 'Mobile'],
-      description: 'Cyberpunk-themed endless runner with procedural level generation and dynamic difficulty scaling.',
-      progress: 100,
-      year: '2024',
-    },
-    {
-      id: 3,
-      title: 'CUSTOM GAME ENGINE',
-      category: 'tools',
-      status: 'In Development',
-      tags: ['C++', 'Vulkan', 'Engine'],
-      description: 'Building a custom game engine from scratch with modern rendering pipeline and entity component system.',
-      progress: 45,
-      year: '2024',
-    },
-    {
-      id: 4,
-      title: 'MEDIEVAL TACTICS',
-      category: 'complete',
-      status: 'Released',
-      tags: ['Unity', 'Strategy', 'AI'],
-      description: 'Turn-based strategy game with advanced AI and procedural campaign generation.',
-      progress: 100,
-      year: '2023',
-    },
-  ]
-
-  const devUpdates = [
-    {
-      date: 'DEC 2024',
-      title: 'Synthetics Multiplayer Beta',
-      content: 'Successfully launched closed beta testing with 500 players. Performance optimization ongoing.',
-    },
-    {
-      date: 'NOV 2024',
-      title: 'Neon Runner Post-Launch Update',
-      content: 'Released major content update with new levels and improved mobile controls based on player feedback.',
-    },
-    {
-      date: 'OCT 2024',
-      title: 'Engine Development Milestone',
-      content: 'Custom engine now supports PBR rendering and real-time global illumination.',
-    },
-  ]
+  const [filter, setFilter] = useState<ProjectCategory>('all')
 
   const filteredProjects = filter === 'all'
-    ? projects
-    : projects.filter(p => p.category === filter)
+    ? projectCards
+    : projectCards.filter(project => project.category === filter)
 
   return (
     <div className="min-h-screen pt-16 overflow-hidden">
@@ -87,7 +262,7 @@ export default function Development() {
             <h1 className="text-3xl md:text-5xl font-bold mb-3 code-font">
               <DecryptText
                 text=">>>_DEVELOPMENT.PORTAL"
-                className="text-crimson-bright text-glow inline-block"
+                className="text-crimson-bright text-glow block max-w-full break-words"
                 as="span"
                 speed={40}
               />
@@ -97,6 +272,7 @@ export default function Development() {
                 text="follow.my_journey.in_creating.innovative_games.and.tools"
                 as="span"
                 speed={25}
+                className="break-words"
               />
             </p>
           </motion.div>
@@ -127,80 +303,42 @@ export default function Development() {
             {activeTab === 'projects' && (
               <div className="h-full flex flex-col gap-4">
                 <div className="flex flex-wrap justify-center gap-2">
-                  {['all', 'main', 'complete', 'tools'].map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setFilter(category)}
-                      className={`px-3 py-1 text-[10px] md:text-xs font-semibold tracking-wider transition-all code-font ${
-                        filter === category
-                          ? 'bg-crimson text-white'
-                          : 'bg-transparent neon-border text-crimson-bright hover:bg-crimson/10'
-                      }`}
-                    >
-                      <DecryptText text={category.toUpperCase()} as="span" speed={30} />
-                    </button>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredProjects.map((project, index) => (
-                    <motion.div
-                      key={project.id}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.08 }}
-                      className="bg-dark-card neon-border p-4 scan-line group"
-                    >
-                      <div className="flex justify-between items-start mb-3">
-                        <DecryptText
-                          text={project.title}
-                          className="text-lg font-bold text-crimson-bright group-hover:text-glow transition-all code-font"
-                          as="h3"
-                          speed={40}
-                        />
-                        <span className="text-[10px] text-gray-500 code-font">{project.year}</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 text-[10px] bg-dark-bg text-gray-400 border border-crimson/20 code-font"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      <p className="text-gray-400 mb-4 leading-relaxed code-font text-xs">
-                        {project.description}
-                      </p>
-
-                      <div className="mb-3">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-[10px] text-gray-500 code-font">PROGRESS</span>
-                          <span className="text-[10px] text-crimson-bright code-font">{project.progress}%</span>
-                        </div>
-                        <div className="h-1.5 bg-dark-bg rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${project.progress}%` }}
-                            transition={{ duration: 1, delay: index * 0.1 + 0.3 }}
-                            className="h-full bg-crimson"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center">
-                        <span className={`text-xs font-semibold code-font ${
-                          project.status === 'Released' ? 'text-green-500' : 'text-crimson-bright'
-                        }`}>
-                          {project.status.toUpperCase().replace(' ', '_')}
+                  {projectFilters.map((category) => {
+                    const isActive = filter === category.id
+                    return (
+                      <motion.button
+                        key={category.id}
+                        onClick={() => setFilter(category.id)}
+                        className={`relative overflow-hidden px-3 py-1 text-[10px] md:text-xs font-semibold tracking-wider transition-all code-font border bg-[#0b0f14]/70 ${
+                          isActive
+                            ? 'border-crimson-bright bg-crimson/20 text-crimson-bright'
+                            : 'border-crimson/30 text-gray-500 hover:text-crimson-bright'
+                        }`}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        <span className="relative z-10">
+                          <DecryptText text={category.label} as="span" speed={30} />
                         </span>
-                      </div>
-                    </motion.div>
-                  ))}
+                        <motion.span
+                          className="pointer-events-none absolute inset-0 opacity-0"
+                          animate={isActive ? { opacity: 1, x: ['-60%', '120%'] } : { opacity: 0, x: '-60%' }}
+                          transition={{ duration: 1.4, repeat: isActive ? Infinity : 0, ease: 'linear' }}
+                          style={{
+                            background: 'linear-gradient(90deg, transparent, rgba(196, 30, 58, 0.25), transparent)'
+                          }}
+                        />
+                      </motion.button>
+                    )
+                  })}
                 </div>
+
+                <FocusCardGrid
+                  cards={filteredProjects}
+                  layoutPrefix="dev-projects"
+                  panelLabel="PROJECT.PAYLOAD"
+                  gridClassName="grid grid-cols-1 md:grid-cols-2 gap-4"
+                />
               </div>
             )}
 
@@ -216,29 +354,19 @@ export default function Development() {
             )}
 
             {activeTab === 'updates' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {devUpdates.map((update, index) => (
-                  <motion.div
-                    key={update.date}
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-dark-card neon-border p-4"
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-2 h-2 bg-crimson-bright rounded-full animate-pulse" />
-                      <span className="text-[10px] text-gray-500 tracking-wider code-font">{update.date}</span>
-                    </div>
-                    <DecryptText
-                      text={update.title.toUpperCase().replace(/ /g, '_')}
-                      className="text-sm font-bold text-crimson-bright mb-2 code-font"
-                      as="h3"
-                      speed={35}
-                    />
-                    <p className="text-gray-400 code-font text-xs">{update.content}</p>
-                  </motion.div>
-                ))}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="h-full"
+              >
+                <FocusCardGrid
+                  cards={updateCards}
+                  layoutPrefix="dev-updates"
+                  panelLabel="UPDATE.PAYLOAD"
+                  gridClassName="grid grid-cols-1 md:grid-cols-3 gap-4"
+                />
+              </motion.div>
             )}
           </div>
         </div>

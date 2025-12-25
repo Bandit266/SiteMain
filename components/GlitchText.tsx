@@ -90,7 +90,7 @@ export default function GlitchText({
   className = '',
   interval = 3000,
   hold = 0,
-  intensity = 0.2,
+  intensity = 0.16,
   glitchPool,
   mode = 'similar',
   as: Component = 'span',
@@ -142,12 +142,14 @@ export default function GlitchText({
       return
     }
 
-    const safeInterval = Math.max(240, interval)
-    const minGap = safeInterval * 0.6
-    const maxGap = safeInterval * 1.8
-    const minDuration = Math.min(140, safeInterval * 0.4)
-    const maxDuration = Math.min(220, safeInterval * 0.6)
-    const maxActive = Math.max(1, Math.min(2, Math.round(mutableIndexes.length * intensity * 0.12 + 0.5)))
+    const safeInterval = Math.max(480, interval)
+    const minGap = safeInterval * 0.7
+    const maxGap = safeInterval * 2.1
+    const minDuration = Math.min(120, safeInterval * 0.28)
+    const maxDuration = Math.min(180, safeInterval * 0.42)
+    const maxActive = mode === 'similar'
+      ? 1
+      : Math.max(1, Math.min(2, Math.round(mutableIndexes.length * intensity * 0.12 + 0.5)))
 
     const nextAt = new Array(chars.length).fill(Number.POSITIVE_INFINITY)
     const until = new Array(chars.length).fill(0)
@@ -210,24 +212,24 @@ export default function GlitchText({
             opacity: 1;
           }
           15% {
-            transform: scaleX(1.02) translateX(-2px);
-            opacity: 0.95;
+            transform: scaleX(1.01) translateX(-1px);
+            opacity: 0.96;
           }
           30% {
-            transform: scaleX(0.98) translateX(3px);
-            opacity: 0.9;
+            transform: scaleX(0.99) translateX(1px);
+            opacity: 0.94;
           }
           45% {
-            transform: scaleX(1.015) translateX(-1px);
-            opacity: 0.92;
+            transform: scaleX(1.005) translateX(-0.5px);
+            opacity: 0.95;
           }
           60% {
-            transform: scaleX(0.985) translateX(2px);
-            opacity: 0.88;
+            transform: scaleX(0.995) translateX(0.8px);
+            opacity: 0.93;
           }
           75% {
-            transform: scaleX(1.008) translateX(-1.5px);
-            opacity: 0.94;
+            transform: scaleX(1.004) translateX(-0.6px);
+            opacity: 0.95;
           }
           100% {
             transform: scaleX(1) translateX(0);
@@ -259,26 +261,26 @@ export default function GlitchText({
         :global(.glitch-active::before) {
           content: attr(data-text);
           position: absolute;
-          left: -2px;
-          text-shadow: 2px 0 #ff0000;
+          left: -1px;
+          text-shadow: 1px 0 #ff0000;
           top: 0;
           color: inherit;
           overflow: hidden;
           animation: horizontal-scan 120ms steps(4, end);
-          opacity: 0.7;
+          opacity: 0.35;
           pointer-events: none;
         }
 
         :global(.glitch-active::after) {
           content: attr(data-text);
           position: absolute;
-          left: 2px;
-          text-shadow: -2px 0 #00ffff;
+          left: 1px;
+          text-shadow: -1px 0 #00ffff;
           top: 0;
           color: inherit;
           overflow: hidden;
           animation: horizontal-scan 120ms steps(4, end) reverse;
-          opacity: 0.7;
+          opacity: 0.35;
           pointer-events: none;
         }
       `}</style>

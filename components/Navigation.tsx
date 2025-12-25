@@ -30,8 +30,12 @@ export default function Navigation() {
     }
   }, [isOpen])
 
+  useEffect(() => {
+    setIsOpen(false)
+  }, [pathname])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/90 backdrop-blur-md border-b border-crimson/30">
+    <nav className="fixed top-0 left-0 right-0 z-[200] bg-dark-bg/90 backdrop-blur-md border-b border-crimson/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -77,229 +81,150 @@ export default function Navigation() {
             <motion.button
               type="button"
               onClick={() => setIsOpen((prev) => !prev)}
-              className="relative z-[9999] inline-flex items-center justify-center px-4 py-2.5 border-2 border-crimson-bright bg-[#1a1f2e] text-crimson-bright code-font text-sm font-bold tracking-wider focus:outline-none shadow-lg"
-              style={{ boxShadow: '0 0 20px rgba(196, 30, 58, 0.6), inset 0 0 10px rgba(196, 30, 58, 0.1)' }}
-              whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(196, 30, 58, 0.9), inset 0 0 15px rgba(196, 30, 58, 0.2)' }}
-              whileTap={{ scale: 0.95 }}
+              className="relative z-[9999] inline-flex items-center justify-center gap-2 px-3 py-2 border border-crimson/50 bg-[#0a0e14] text-crimson-bright code-font text-xs font-bold tracking-widest focus:outline-none"
+              style={{ boxShadow: '0 0 16px rgba(196, 30, 58, 0.4), inset 0 0 8px rgba(196, 30, 58, 0.08)' }}
+              whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(196, 30, 58, 0.7), inset 0 0 12px rgba(196, 30, 58, 0.15)' }}
+              whileTap={{ scale: 0.96 }}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
             >
-              <span className={`${isOpen ? 'hidden' : 'flex'} flex-col gap-1.5 mr-2.5`}>
+              <div className={`${isOpen ? 'hidden' : 'flex'} flex-col gap-1 w-4`}>
                 <motion.span
-                  className="w-5 h-0.5 bg-crimson-bright shadow-[0_0_4px_rgba(196,30,58,0.8)]"
-                  animate={{ scaleX: [1, 0.7, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-full h-[2px] bg-crimson-bright"
+                  style={{ boxShadow: '0 0 6px rgba(196, 30, 58, 0.8)' }}
+                  animate={{ scaleX: [1, 0.8, 1], x: [0, 2, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                 />
                 <motion.span
-                  className="w-5 h-0.5 bg-crimson-bright shadow-[0_0_4px_rgba(196,30,58,0.8)]"
-                  animate={{ scaleX: [1, 0.9, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                  className="w-full h-[2px] bg-crimson-bright"
+                  style={{ boxShadow: '0 0 6px rgba(196, 30, 58, 0.8)' }}
+                  animate={{ scaleX: [1, 0.95, 1] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
                 />
                 <motion.span
-                  className="w-5 h-0.5 bg-crimson-bright shadow-[0_0_4px_rgba(196,30,58,0.8)]"
-                  animate={{ scaleX: [1, 0.8, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+                  className="w-full h-[2px] bg-crimson-bright"
+                  style={{ boxShadow: '0 0 6px rgba(196, 30, 58, 0.8)' }}
+                  animate={{ scaleX: [1, 0.85, 1], x: [0, -2, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
                 />
-              </span>
+              </div>
               <svg
-                className={`${isOpen ? 'block' : 'hidden'} h-5 w-5 mr-2`}
+                className={`${isOpen ? 'block' : 'hidden'} h-4 w-4`}
                 stroke="currentColor"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth="3"
+                strokeWidth="2.5"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-              <span>{isOpen ? 'CLOSE' : 'MENU'}</span>
+              <span className="text-[10px]">{isOpen ? 'CLOSE' : 'MENU'}</span>
             </motion.button>
           </div>
         </div>
       </div>
 
-      {/* Terminal-style Mobile Menu Side Widget */}
+      {/* Mobile Menu - Right Side Widget */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Semi-transparent backdrop */}
+            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] lg:hidden"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9998] lg:hidden"
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Side Menu Widget */}
+            {/* Side Widget */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="fixed right-0 top-16 bottom-0 w-[85vw] max-w-sm bg-[#0a0e14] border-l-2 border-crimson/50 z-[9999] lg:hidden overflow-hidden"
-              style={{ boxShadow: '-5px 0 40px rgba(196, 30, 58, 0.4)' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 250 }}
+              className="fixed right-0 top-0 bottom-12 w-[min(85vw,380px)] bg-[#020305] border-l-2 border-crimson/40 z-[9999] lg:hidden overflow-hidden flex flex-col"
+              style={{ boxShadow: '-8px 0 48px rgba(0, 0, 0, 0.9), -2px 0 16px rgba(196, 30, 58, 0.3)' }}
               id="mobile-menu"
             >
-              {/* Background with animated grid */}
-              <div className="absolute inset-0 bg-[#07090c]">
-                {/* Animated grid pattern */}
-                <motion.div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage: 'linear-gradient(rgba(196, 30, 58, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(196, 30, 58, 0.15) 1px, transparent 1px)',
-                    backgroundSize: '40px 40px'
-                  }}
-                  animate={{ opacity: [0.3, 0.5, 0.3] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                />
-
-                {/* Scanning line effect */}
-                <motion.div
-                  className="absolute inset-x-0 h-px bg-crimson-bright"
-                  style={{ boxShadow: '0 0 20px rgba(196, 30, 58, 0.8)' }}
-                  animate={{ y: ['0%', '100%'] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                />
-
-                {/* Particle noise overlay */}
-                <div
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")'
-                  }}
-                />
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-crimson/30 bg-[#03050a]">
+                <div className="text-[10px] tracking-[0.4em] text-gray-600 code-font">NAV.SYSTEM</div>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 border border-crimson/50 bg-crimson/10 text-crimson-bright text-xs code-font tracking-widest hover:bg-crimson/20 transition-colors"
+                >
+                  <svg className="h-3.5 w-3.5" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>CLOSE</span>
+                </button>
               </div>
 
-              {/* Content Container */}
-              <div className="relative h-full flex flex-col">
-                {/* Prominent Close Button */}
-                <div className="absolute top-3 right-3 z-10">
-                  <motion.button
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 bg-crimson/90 hover:bg-crimson border-2 border-crimson-bright text-white code-font text-xs font-bold tracking-wider transition-all touch-manipulation"
-                    style={{ boxShadow: '0 0 15px rgba(196, 30, 58, 0.6)' }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    aria-label="Close menu"
-                  >
-                    <svg className="h-4 w-4" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth="3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    <span>CLOSE</span>
-                  </motion.button>
-                </div>
-
-                {/* Terminal Header */}
-                <div className="border-b-2 border-crimson/30 p-4 bg-[#07090c]">
-                  <div className="flex items-start justify-between mb-3 pr-20">
-                    <div className="code-font text-crimson-bright text-sm font-bold tracking-wider">
-                      <DecryptText text="SYSTEM.NAVIGATION" as="span" speed={40} />
-                    </div>
-                  </div>
-
-                {/* System Status Indicators */}
-                <div className="flex gap-4 text-xs code-font">
-                  <div className="flex items-center gap-1.5">
-                    <motion.div
-                      className="w-2 h-2 bg-green-500 rounded-full"
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <span className="text-green-500">ONLINE</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <motion.div
-                      className="w-2 h-2 bg-crimson-bright rounded-full"
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-                    <span className="text-crimson-bright">SECURE</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <motion.div
-                      className="w-2 h-2 bg-cyan-400 rounded-full"
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2.5, repeat: Infinity }}
-                    />
-                    <span className="text-cyan-400">CONNECTED</span>
-                  </div>
-                  </div>
-                </div>
-
-                {/* Navigation Links */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2 custom-scrollbar">
                 {navItems.map((item, index) => {
                   const isActive = pathname === item.path
                   return (
                     <motion.div
                       key={item.path}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      transition={{ delay: index * 0.06 }}
                     >
-                        <Link
-                          href={item.path}
-                          onClick={() => setIsOpen(false)}
-                          className={`block relative group`}
-                        >
-                          {/* Terminal prompt indicator */}
-                          <div className="flex items-center gap-2 p-3 border border-crimson/20 hover:border-crimson/50 transition-all bg-[#0a0e14]/50 hover:bg-[#0a0e14] group touch-manipulation">
-                            <span className="code-font text-crimson-bright text-sm">▸</span>
-                            <span className={`code-font tracking-wider text-sm font-medium transition-all ${
-                              isActive
-                                ? 'text-crimson-bright'
-                                : 'text-gray-400 group-hover:text-crimson-bright'
-                            }`}>
-                              <DecryptText text={item.name} as="span" speed={30} />
-                            </span>
-
-                            {/* Active indicator */}
-                            {isActive && (
-                              <motion.div
-                                layoutId="activeIndicator"
-                                className="ml-auto px-2 py-0.5 bg-crimson/20 border border-crimson/50 text-crimson-bright text-xs code-font"
-                                style={{ boxShadow: '0 0 10px rgba(196, 30, 58, 0.3)' }}
-                              >
-                                ACTIVE
-                              </motion.div>
-                            )}
-                          </div>
-
-                          {/* Hover glow effect */}
-                          <div
-                            className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}
-                            style={{
-                              boxShadow: 'inset 0 0 20px rgba(196, 30, 58, 0.1)'
-                            }}
-                          />
-                        </Link>
+                      <Link
+                        href={item.path}
+                        onClick={() => setIsOpen(false)}
+                        className={`block px-4 py-3 border transition-all code-font text-sm tracking-wider ${
+                          isActive
+                            ? 'border-crimson/60 bg-crimson/10 text-crimson-bright shadow-[inset_0_0_12px_rgba(196,30,58,0.15)]'
+                            : 'border-crimson/25 bg-[#05080d]/80 text-gray-400 hover:border-crimson/50 hover:text-crimson-bright hover:bg-[#080c12]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{item.name}</span>
+                          {isActive && (
+                            <span className="text-[10px] text-crimson-bright/70">ACTIVE</span>
+                          )}
+                        </div>
+                      </Link>
                     </motion.div>
                   )
                 })}
-                </div>
+              </div>
 
-                {/* Terminal Footer */}
-                <div className="border-t-2 border-crimson/30 p-4 bg-[#07090c]">
-                  <div className="code-font text-xs text-gray-600 space-y-1">
-                    <div className="flex justify-between">
-                      <span>SYSTEM.VERSION</span>
-                      <span className="text-crimson-bright">v2.5.1</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>UPTIME</span>
-                      <span className="text-green-500">99.98%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>PROTOCOL</span>
-                      <span className="text-cyan-400">SECURE.TLS</span>
-                    </div>
-                  </div>
+              {/* Footer Status */}
+              <div className="border-t border-crimson/30 px-4 py-3 bg-[#03050a] text-[9px] code-font text-gray-600 space-y-1">
+                <div className="flex justify-between">
+                  <span>STATUS</span>
+                  <span className="text-crimson-bright">ONLINE</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>MODE</span>
+                  <span className="text-gray-500">MOBILE.WIDGET</span>
                 </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(10, 14, 20, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(196, 30, 58, 0.4);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(196, 30, 58, 0.6);
+        }
+      `}</style>
     </nav>
   )
 }

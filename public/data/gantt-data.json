@@ -1,0 +1,138 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "name": "Concept & Pre-Production",
+      "start": "2024-01-01",
+      "end": "2024-02-15",
+      "progress": 100,
+      "category": "analysis",
+      "assignee": "Lead Designer"
+    },
+    {
+      "id": "2",
+      "name": "Core Gameplay Prototype",
+      "start": "2024-02-01",
+      "end": "2024-03-30",
+      "progress": 100,
+      "category": "development",
+      "assignee": "Dev Team"
+    },
+    {
+      "id": "3",
+      "name": "Character Design & Modeling",
+      "start": "2024-02-15",
+      "end": "2024-05-01",
+      "progress": 85,
+      "category": "art",
+      "assignee": "Art Team"
+    },
+    {
+      "id": "4",
+      "name": "Level Design - Act 1",
+      "start": "2024-03-15",
+      "end": "2024-06-01",
+      "progress": 70,
+      "category": "design",
+      "assignee": "Level Designer"
+    },
+    {
+      "id": "5",
+      "name": "Combat System Implementation",
+      "start": "2024-04-01",
+      "end": "2024-07-15",
+      "progress": 60,
+      "category": "development",
+      "assignee": "Gameplay Programmer"
+    },
+    {
+      "id": "6",
+      "name": "AI & Enemy Behavior",
+      "start": "2024-05-01",
+      "end": "2024-08-01",
+      "progress": 45,
+      "category": "development",
+      "assignee": "AI Programmer"
+    },
+    {
+      "id": "7",
+      "name": "UI/UX Design",
+      "start": "2024-04-15",
+      "end": "2024-07-01",
+      "progress": 55,
+      "category": "design",
+      "assignee": "UI Designer"
+    },
+    {
+      "id": "8",
+      "name": "Sound Design & Music",
+      "start": "2024-06-01",
+      "end": "2024-09-15",
+      "progress": 30,
+      "category": "art",
+      "assignee": "Audio Team"
+    },
+    {
+      "id": "9",
+      "name": "Alpha Testing Phase",
+      "start": "2024-08-01",
+      "end": "2024-09-30",
+      "progress": 20,
+      "category": "testing",
+      "assignee": "QA Team"
+    },
+    {
+      "id": "10",
+      "name": "Multiplayer Integration",
+      "start": "2024-07-01",
+      "end": "2024-10-15",
+      "progress": 15,
+      "category": "development",
+      "assignee": "Network Programmer"
+    },
+    {
+      "id": "11",
+      "name": "Beta Testing & Polish",
+      "start": "2024-10-01",
+      "end": "2024-12-15",
+      "progress": 0,
+      "category": "testing",
+      "assignee": "QA Team"
+    },
+    {
+      "id": "12",
+      "name": "Marketing & Trailer Production",
+      "start": "2024-09-01",
+      "end": "2024-12-31",
+      "progress": 10,
+      "category": "art",
+      "assignee": "Marketing Team"
+    }
+  ],
+  "milestones": [
+    {
+      "date": "2024-02-15",
+      "name": "Concept Approval"
+    },
+    {
+      "date": "2024-03-30",
+      "name": "Prototype Complete"
+    },
+    {
+      "date": "2024-06-01",
+      "name": "Vertical Slice Demo"
+    },
+    {
+      "date": "2024-09-30",
+      "name": "Alpha Release"
+    },
+    {
+      "date": "2024-12-15",
+      "name": "Beta Release"
+    },
+    {
+      "date": "2025-03-01",
+      "name": "Target Launch Date"
+    }
+  ]
+}

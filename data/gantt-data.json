@@ -1,0 +1,117 @@
+{
+  "tasks": [
+    {
+      "id": "task-1",
+      "name": "CORE_ENGINE.REFACTOR",
+      "description": "refactoring.core_engine.architecture.for.better.performance",
+      "fullDescription": "Complete overhaul of the game engine's core architecture. This includes optimizing the rendering pipeline, implementing a new entity component system, and improving memory management for better performance across all platforms.",
+      "startDate": "2025-12-20",
+      "endDate": "2026-01-15",
+      "progress": 65,
+      "status": "in_progress",
+      "category": "engine",
+      "priority": "high",
+      "dependencies": []
+    },
+    {
+      "id": "task-2",
+      "name": "MULTIPLAYER.NETCODE",
+      "description": "implementing.client-server.networking.protocol",
+      "fullDescription": "Building robust multiplayer networking using client-server architecture. Includes implementing lag compensation, client-side prediction, server reconciliation, and entity interpolation for smooth multiplayer gameplay.",
+      "startDate": "2026-01-10",
+      "endDate": "2026-02-28",
+      "progress": 30,
+      "status": "in_progress",
+      "category": "networking",
+      "priority": "critical",
+      "dependencies": ["task-1"]
+    },
+    {
+      "id": "task-3",
+      "name": "UI_SYSTEM.REDESIGN",
+      "description": "creating.modular_ui.framework.with.animations",
+      "fullDescription": "Designing and implementing a new UI system with support for complex animations, transitions, and interactive elements. Built with modularity in mind for easy reusability across different game screens.",
+      "startDate": "2025-12-25",
+      "endDate": "2026-01-20",
+      "progress": 45,
+      "status": "in_progress",
+      "category": "ui",
+      "priority": "medium",
+      "dependencies": []
+    },
+    {
+      "id": "task-4",
+      "name": "PROCEDURAL.GENERATION",
+      "description": "building.procedural_level.generation.system",
+      "fullDescription": "Implementing procedural generation algorithms for creating infinite, varied game levels. Uses seed-based generation, noise functions, and custom rule sets to ensure both variety and playability.",
+      "startDate": "2026-01-25",
+      "endDate": "2026-03-10",
+      "progress": 15,
+      "status": "planned",
+      "category": "gameplay",
+      "priority": "high",
+      "dependencies": ["task-1"]
+    },
+    {
+      "id": "task-5",
+      "name": "AUDIO.ENGINE",
+      "description": "integrating.3d_spatial.audio.system",
+      "fullDescription": "Integration of advanced 3D spatial audio engine with support for HRTF, reverb, occlusion, and dynamic mixing. Ensures immersive audio experience that responds to game environment.",
+      "startDate": "2026-02-01",
+      "endDate": "2026-02-25",
+      "progress": 0,
+      "status": "planned",
+      "category": "audio",
+      "priority": "medium",
+      "dependencies": []
+    },
+    {
+      "id": "task-6",
+      "name": "PHYSICS.OPTIMIZATION",
+      "description": "optimizing.physics.calculations.and.collision",
+      "fullDescription": "Optimizing physics engine for better performance. Implementing spatial partitioning, continuous collision detection improvements, and multithreading support for physics calculations.",
+      "startDate": "2026-02-15",
+      "endDate": "2026-03-15",
+      "progress": 0,
+      "status": "planned",
+      "category": "engine",
+      "priority": "high",
+      "dependencies": ["task-1"]
+    },
+    {
+      "id": "task-7",
+      "name": "ASSET.PIPELINE",
+      "description": "building.automated_asset.processing.pipeline",
+      "fullDescription": "Creating an automated asset processing pipeline for textures, models, and audio. Includes compression, LOD generation, and platform-specific optimization.",
+      "startDate": "2026-03-01",
+      "endDate": "2026-03-25",
+      "progress": 5,
+      "status": "planned",
+      "category": "tools",
+      "priority": "medium",
+      "dependencies": []
+    },
+    {
+      "id": "task-8",
+      "name": "SAVE.SYSTEM",
+      "description": "implementing.cloud-synced.save.system",
+      "fullDescription": "Building a comprehensive save system with local storage, cloud sync capabilities, and automatic backup. Includes save state versioning and migration support.",
+      "startDate": "2026-01-05",
+      "endDate": "2026-01-30",
+      "progress": 80,
+      "status": "in_progress",
+      "category": "systems",
+      "priority": "high",
+      "dependencies": []
+    }
+  ],
+  "categories": {
+    "engine": { "color": "#c41e3a", "label": "ENGINE" },
+    "networking": { "color": "#e63946", "label": "NETWORKING" },
+    "ui": { "color": "#f77f00", "label": "UI/UX" },
+    "gameplay": { "color": "#06a77d", "label": "GAMEPLAY" },
+    "audio": { "color": "#9d4edd", "label": "AUDIO" },
+    "systems": { "color": "#0096c7", "label": "SYSTEMS" },
+    "tools": { "color": "#48cae4", "label": "TOOLS" }
+  }
+}

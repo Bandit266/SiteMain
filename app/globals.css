@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --grid-color: rgba(196, 30, 58, 0.1);
+    --crimson: #c41e3a;
+  }
+
+  body {
+    @apply bg-dark-bg text-white;
+    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+  }
+
+  body.page-transitioning main {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .code-font {
+    font-family: 'Courier New', 'Consolas', 'Monaco', 'SF Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer components {
+  .grid-bg {
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: -1px -1px;
+  }
+
+  .neon-border {
+    border: 1px solid rgba(196, 30, 58, 0.4);
+    box-shadow: 0 0 10px rgba(196, 30, 58, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .neon-border:hover {
+    border-color: rgba(196, 30, 58, 0.7);
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px rgba(196, 30, 58, 0.6), 0 0 20px rgba(196, 30, 58, 0.4);
+  }
+
+  .text-glow-subtle {
+    text-shadow: 0 0 6px rgba(196, 30, 58, 0.3), 0 0 12px rgba(196, 30, 58, 0.2);
+  }
+
+  .neon-border-subtle {
+    border: 1px solid rgba(196, 30, 58, 0.25);
+    box-shadow: 0 0 5px rgba(196, 30, 58, 0.15);
+    transition: all 0.3s ease;
+  }
+
+  .neon-border-subtle:hover {
+    border-color: rgba(196, 30, 58, 0.4);
+    box-shadow: 0 0 10px rgba(196, 30, 58, 0.25);
+  }
+
+  .vignette {
+    position: relative;
+  }
+
+  .vignette::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, transparent 30%, rgba(15, 20, 25, 0.4) 60%, rgba(15, 20, 25, 0.8) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .vignette-strong {
+    position: relative;
+  }
+
+  .vignette-strong::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(15, 20, 25, 0.3) 40%, rgba(15, 20, 25, 0.7) 70%, rgba(10, 14, 19, 0.95) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .scan-line {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scan-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(196, 30, 58, 0.15),
+      transparent
+    );
+    animation: scan 3s infinite;
+  }
+
+  @keyframes scan {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+}

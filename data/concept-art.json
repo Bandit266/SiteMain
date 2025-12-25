@@ -1,0 +1,132 @@
+{
+  "artworks": [
+    {
+      "id": "art-1",
+      "title": "CYBER_WARRIOR.PROTOTYPE",
+      "image": "/Assets/Sh1.jpg",
+      "faction": "synthetics",
+      "description": "early.concept.design.for.synthetic.soldier.unit",
+      "date": "2025-12"
+    },
+    {
+      "id": "art-2",
+      "title": "NEURAL_INTERFACE.DESIGN",
+      "image": "/Assets/Sh2.jpg",
+      "faction": "synthetics",
+      "description": "advanced.neural.connection.technology.prototype",
+      "date": "2025-11"
+    },
+    {
+      "id": "art-3",
+      "title": "DARK_CORRIDOR.ENVIRONMENT",
+      "image": "/Assets/Sh1.jpg",
+      "faction": "environment",
+      "description": "atmospheric.corridor.with.sci-fi.architecture",
+      "date": "2025-10"
+    },
+    {
+      "id": "art-4",
+      "title": "AUGMENTED_OPERATIVE.V2",
+      "image": "/Assets/Sh2.jpg",
+      "faction": "resistance",
+      "description": "resistance.fighter.with.custom.augmentations",
+      "date": "2025-09"
+    },
+    {
+      "id": "art-5",
+      "title": "NEON_CITY.SKYLINE",
+      "image": "/Assets/Sh1.jpg",
+      "faction": "environment",
+      "description": "dystopian.megacity.concept.art",
+      "date": "2025-08"
+    },
+    {
+      "id": "art-6",
+      "title": "MECH_UNIT.ALPHA",
+      "image": "/Assets/Sh2.jpg",
+      "faction": "machines",
+      "description": "heavy.combat.mech.preliminary.design",
+      "date": "2025-07"
+    },
+    {
+      "id": "art-7",
+      "title": "UNDERGROUND_BASE.LAYOUT",
+      "image": "/Assets/Sh1.jpg",
+      "faction": "environment",
+      "description": "resistance.hideout.interior.concept",
+      "date": "2025-06"
+    },
+    {
+      "id": "art-8",
+      "title": "SYNTHETIC_QUEEN.BOSS",
+      "image": "/Assets/Sh2.jpg",
+      "faction": "synthetics",
+      "description": "final.boss.character.design.iteration",
+      "date": "2025-05"
+    },
+    {
+      "id": "art-9",
+      "title": "WEAPON_SYSTEMS.CATALOG",
+      "image": "/Assets/Sh1.jpg",
+      "faction": "weapons",
+      "description": "various.futuristic.weapon.designs",
+      "date": "2025-04"
+    },
+    {
+      "id": "art-10",
+      "title": "HACKER_PROTAGONIST.FINAL",
+      "image": "/Assets/Sh2.jpg",
+      "faction": "resistance",
+      "description": "main.character.final.design.approved",
+      "date": "2025-03"
+    },
+    {
+      "id": "art-11",
+      "title": "DRONE_SWARM.CONCEPT",
+      "image": "/Assets/Sh1.jpg",
+      "faction": "machines",
+      "description": "autonomous.attack.drone.variations",
+      "date": "2025-02"
+    },
+    {
+      "id": "art-12",
+      "title": "CORPORATE_TOWER.EXTERIOR",
+      "image": "/Assets/Sh2.jpg",
+      "faction": "environment",
+      "description": "mega.corporation.headquarters.design",
+      "date": "2025-01"
+    }
+  ],
+  "factions": {
+    "all": {
+      "label": "ALL.CONCEPTS",
+      "color": "#c41e3a",
+      "icon": "◈"
+    },
+    "synthetics": {
+      "label": "SYNTHETICS",
+      "color": "#e63946",
+      "icon": "◆"
+    },
+    "resistance": {
+      "label": "RESISTANCE",
+      "color": "#06a77d",
+      "icon": "▲"
+    },
+    "machines": {
+      "label": "MACHINES",
+      "color": "#f77f00",
+      "icon": "■"
+    },
+    "environment": {
+      "label": "ENVIRONMENTS",
+      "color": "#0096c7",
+      "icon": "●"
+    },
+    "weapons": {
+      "label": "WEAPONS",
+      "color": "#9d4edd",
+      "icon": "▼"
+    }
+  }
+}

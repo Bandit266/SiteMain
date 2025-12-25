@@ -244,13 +244,6 @@ const commands: Record<string, () => TerminalLine[]> = {
     { type: 'output', content: 'Trade humanity for performance. Trade flesh for function.' },
     { type: 'output', content: 'The question isn\'t what you become—it\'s what you were willing to lose.' },
   ],
-  survival: () => [
-    { type: 'system', content: 'SURVIVAL.LOOP' },
-    { type: 'output', content: 'Hydration, heat, and radiation force constant route planning.' },
-    { type: 'output', content: 'Scavenge components to craft gear, shelters, and signal beacons.' },
-    { type: 'output', content: 'Hunt, trade, or raid to keep food and fuel stable.' },
-    { type: 'output', content: 'Safehouses act as respawn nodes and dynamic storage caches.' },
-  ],
   signals: () => [
     { type: 'system', content: 'AI.RELAY.STATUS' },
     { type: 'output', content: 'AI_BOT: Online. Awaiting query tokens.' },

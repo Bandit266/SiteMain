@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import DecryptText from '@/components/DecryptText'
 import FocusCardGrid, { type FocusCard } from '@/components/FocusCardGrid'
@@ -169,6 +169,37 @@ const intelCards: FocusCard[] = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'deploy' | 'intel'>('deploy')
+  const [flickerIndices, setFlickerIndices] = useState<number[]>([])
+
+  useEffect(() => {
+    let isMounted = true
+    let flickerTimeout: ReturnType<typeof setTimeout> | null = null
+    let nextBurstTimeout: ReturnType<typeof setTimeout> | null = null
+
+    const scheduleBurst = () => {
+      const delay = 1000 + Math.random() * 700
+      nextBurstTimeout = setTimeout(() => {
+        if (!isMounted) return
+        const length = 2 + Math.floor(Math.random() * 3)
+        const start = Math.floor(Math.random() * (9 - length + 1))
+        const indices = Array.from({ length }, (_, idx) => start + idx)
+        setFlickerIndices(indices)
+        flickerTimeout = setTimeout(() => {
+          if (!isMounted) return
+          setFlickerIndices([])
+        }, 220)
+        scheduleBurst()
+      }, delay)
+    }
+
+    scheduleBurst()
+
+    return () => {
+      isMounted = false
+      if (flickerTimeout) clearTimeout(flickerTimeout)
+      if (nextBurstTimeout) clearTimeout(nextBurstTimeout)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen overflow-hidden">
@@ -182,7 +213,16 @@ export default function Home() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 code-font text-crimson-bright text-glow group cursor-default" style={{ letterSpacing: '0.2em' }}>
-              <span className="group-hover:hidden">SYNTHETIX</span>
+              <span className="group-hover:hidden">
+                {'SYNTHETIX'.split('').map((char, index) => (
+                  <span
+                    key={`${char}-${index}`}
+                    className={`inline-block ${flickerIndices.includes(index) ? 'flicker-burst' : ''}`}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </span>
               <span className="hidden group-hover:inline-block">
                 <DecryptText text="SYNTHETIX" as="span" speed={35} />
               </span>
@@ -280,6 +320,21 @@ export default function Home() {
           )}
         </div>
       </section>
+      <style jsx>{`
+        .flicker-burst {
+          animation: flickerBurst 0.22s steps(2, end);
+          text-shadow: 0 0 6px rgba(255, 255, 255, 0.25), 0 0 10px rgba(196, 30, 58, 0.35);
+        }
+
+        @keyframes flickerBurst {
+          0% { opacity: 1; filter: blur(0px); }
+          18% { opacity: 0; filter: blur(1px); }
+          36% { opacity: 1; filter: blur(0px); }
+          54% { opacity: 0; filter: blur(1px); }
+          72% { opacity: 1; filter: blur(0px); }
+          100% { opacity: 1; filter: blur(0px); }
+        }
+      `}</style>
     </div>
   )
 }

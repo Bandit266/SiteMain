@@ -9,10 +9,16 @@ type LoadingLine = {
   tone: 'primary' | 'muted' | 'code' | 'alert'
 }
 
-type TransitionVariant = 'bootSequence' | 'connection' | 'dataTransfer' | 'networkScan' | 'securityCheck' | 'compileBuild' | 'encryptionKey'
+type TransitionVariant = 'bootSequence' | 'dataTransfer' | 'networkScan' | 'securityCheck' | 'compileBuild' | 'encryptionKey'
+type CenterVariant = 'stackedModules' | 'minimalLoad' | 'rightRailCode' | 'signalMatrix'
 
 const getRandomVariant = (): TransitionVariant => {
-  const variants: TransitionVariant[] = ['bootSequence', 'connection', 'dataTransfer', 'networkScan', 'securityCheck', 'compileBuild', 'encryptionKey']
+  const variants: TransitionVariant[] = ['bootSequence', 'dataTransfer', 'networkScan', 'securityCheck', 'compileBuild', 'encryptionKey']
+  return variants[Math.floor(Math.random() * variants.length)]
+}
+
+const getRandomCenterVariant = (): CenterVariant => {
+  const variants: CenterVariant[] = ['stackedModules', 'minimalLoad', 'rightRailCode', 'signalMatrix']
   return variants[Math.floor(Math.random() * variants.length)]
 }
 
@@ -110,8 +116,10 @@ const getRandomProtocol = (): string => {
 export default function PageTransition() {
   const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(false)
+  const [allLines, setAllLines] = useState<LoadingLine[]>([])
   const [visibleLines, setVisibleLines] = useState<LoadingLine[]>([])
   const [variant, setVariant] = useState<TransitionVariant>('bootSequence')
+  const [centerVariant, setCenterVariant] = useState<CenterVariant>('stackedModules')
   const [protocol, setProtocol] = useState<string>('LASER.TYPE.PROTOCOL')
   const isContact = pathname === '/contact'
   const revealDelay = 500
@@ -119,10 +127,12 @@ export default function PageTransition() {
   useLayoutEffect(() => {
     // Set random transition variant and protocol header
     setVariant(getRandomVariant())
+    setCenterVariant(getRandomCenterVariant())
     setProtocol(getRandomProtocol())
 
     const config = pageConfigs[pathname] || pageConfigs['/']
-    const allLines = buildLines(config)
+    const builtLines = buildLines(config)
+    setAllLines(builtLines)
 
     setIsLoading(true)
     setVisibleLines([])
@@ -131,14 +141,14 @@ export default function PageTransition() {
     let index = 0
     const lineInterval = setInterval(() => {
       index += 1
-      setVisibleLines(allLines.slice(0, index))
-      if (index >= allLines.length) {
+      setVisibleLines(builtLines.slice(0, index))
+      if (index >= builtLines.length) {
         clearInterval(lineInterval)
       }
     }, 70)
 
     // Contact page: 3 second tunnel animation (independent of content load)
-    const totalDuration = isContact ? 3000 : (900 + allLines.length * 70)
+    const totalDuration = isContact ? 3000 : (900 + builtLines.length * 70)
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, totalDuration)
@@ -209,25 +219,6 @@ export default function PageTransition() {
               animate={{ y: ['0%', '100%'] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             />
-          </div>
-        )
-
-      case 'connection':
-        return (
-          <div className="absolute inset-0 bg-[#07090c]">
-            {/* Ripple circles from center */}
-            {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute inset-0"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: [0, 2, 4], opacity: [0.6, 0.3, 0] }}
-                transition={{ duration: 3, delay: i * 0.6, repeat: Infinity, ease: 'easeOut' }}
-                style={{
-                  backgroundImage: 'radial-gradient(circle at center, transparent 48%, rgba(6, 167, 125, 0.6) 50%, transparent 52%)'
-                }}
-              />
-            ))}
           </div>
         )
 
@@ -343,6 +334,178 @@ export default function PageTransition() {
     }
   }
 
+  const renderCenter = () => {
+    const fallbackLines: LoadingLine[] = [
+      { text: '>>>SYNC.CORE', tone: 'primary' },
+      { text: 'Calibrating channels...', tone: 'muted' },
+      { text: 'int linkNode(uint8_t id);', tone: 'code' },
+      { text: '[WARN] Latency spike detected', tone: 'alert' },
+      { text: 'Stabilizing mesh routing...', tone: 'muted' },
+    ]
+    const displayLines = allLines.length > 0 ? allLines : fallbackLines
+    const activeLines = visibleLines.length > 0 ? visibleLines : displayLines
+    const primaryLine = displayLines[0]?.text ?? '>>>INITIALIZING'
+    const secondaryLine = displayLines[1]?.text ?? 'Aligning systems...'
+
+    switch (centerVariant) {
+      case 'stackedModules': {
+        const moduleLayouts = [
+          { id: 'core', label: 'MODULE.CORE', lines: displayLines.slice(0, 3), left: '42%', top: '34%' },
+          { id: 'sync', label: 'MODULE.SYNC', lines: displayLines.slice(1, 4), left: '56%', top: '48%' },
+          { id: 'io', label: 'MODULE.IO', lines: displayLines.slice(2, 5), left: '48%', top: '62%' },
+        ]
+
+        return (
+          <div className="absolute inset-0 flex items-center justify-center px-4 pointer-events-none">
+            <div className="relative w-full max-w-4xl h-72">
+              <div className="absolute left-0 right-0 -top-6 text-[10px] md:text-xs code-font text-gray-500 tracking-[0.35em] text-center">
+                {protocol}
+              </div>
+              {moduleLayouts.map((module, index) => (
+                <motion.div
+                  key={module.id}
+                  className="absolute w-64 md:w-72 border border-crimson/30 bg-[#0b0f14]/85 p-4"
+                  style={{ left: module.left, top: module.top }}
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    y: [12, 0, 0, -10],
+                    scale: [0.96, 1, 1.02, 1.02],
+                  }}
+                  transition={{ duration: 2.8, repeat: Infinity, delay: index * 0.35 }}
+                >
+                  <div className="text-[10px] text-gray-500 tracking-[0.3em] mb-2">
+                    {module.label}
+                  </div>
+                  <div className="space-y-1 text-[11px] code-font leading-4">
+                    {module.lines.map((line, lineIndex) => (
+                      <div key={`${module.id}-${lineIndex}`} className={toneClass(line.tone)}>
+                        {line.text}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      case 'minimalLoad':
+        return (
+          <div className="absolute inset-0 flex items-center justify-center px-4 pointer-events-none">
+            <div className="w-full max-w-md border border-crimson/30 bg-[#0b0f14]/80 p-6">
+              <div className="text-[10px] text-gray-500 tracking-[0.4em] mb-4">
+                SYSTEM.LOAD.SEQUENCE
+              </div>
+              <div className="flex items-center gap-4">
+                <motion.div
+                  className="w-12 h-12 rounded-full border border-crimson/40 border-t-transparent"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: 'linear' }}
+                />
+                <div className="flex-1">
+                  <div className="text-xs code-font text-crimson-bright">{primaryLine}</div>
+                  <div className="mt-2 h-1 bg-crimson/20 overflow-hidden">
+                    <motion.div
+                      className="h-full bg-crimson-bright"
+                      animate={{ width: ['10%', '85%', '35%'] }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  </div>
+                  <div className="mt-2 text-[10px] text-gray-500">{secondaryLine}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'rightRailCode':
+        return (
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2">
+              <div className="text-[10px] text-gray-500 tracking-[0.35em] mb-2 text-right">
+                {protocol}
+              </div>
+              <div className="w-72 md:w-80 border border-crimson/30 bg-[#0b0f14]/85 p-3">
+                <div className="relative">
+                  <div className="space-y-1 text-[11px] md:text-xs code-font leading-4 text-left">
+                    {activeLines.map((line, index) => (
+                      <motion.div
+                        key={`${line.text}-${index}`}
+                        initial={{ opacity: 0, x: 8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className={toneClass(line.tone)}
+                      >
+                        {line.text}
+                      </motion.div>
+                    ))}
+                  </div>
+                  <motion.div
+                    className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-crimson-bright to-transparent"
+                    animate={{ y: laserOffset }}
+                    transition={{ duration: 0.08, ease: 'linear' }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      default:
+        return (
+          <div className="absolute inset-0 flex items-center justify-center px-4 pointer-events-none">
+            <div className="relative w-full max-w-4xl">
+              <div className="absolute left-1/2 top-1/2 w-36 h-36 -translate-x-1/2 -translate-y-1/2">
+                <div className="absolute inset-0 rounded-full border border-crimson/30" />
+                <motion.div
+                  className="absolute inset-3 rounded-full border border-crimson/40"
+                  animate={{ scale: [0.9, 1.05, 0.9], opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <div className="absolute left-1/2 top-0 h-full w-px bg-crimson/30" />
+                <div className="absolute top-1/2 left-0 h-px w-full bg-crimson/30" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-crimson/30 bg-[#0b0f14]/85 p-4">
+                  <div className="text-[10px] text-gray-500 tracking-[0.35em] mb-2">
+                    {protocol}
+                  </div>
+                  <div className="space-y-1 text-[11px] md:text-xs code-font leading-4">
+                    {displayLines.slice(0, 3).map((line, index) => (
+                      <div key={`matrix-left-${index}`} className={toneClass(line.tone)}>
+                        {line.text}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border border-crimson/20 bg-[#0b0f14]/75 p-4">
+                  <div className="text-[10px] text-gray-500 tracking-[0.35em] mb-2">
+                    SIGNAL.MATRIX
+                  </div>
+                  <div className="space-y-1 text-[11px] md:text-xs code-font leading-4 text-gray-400">
+                    {displayLines.slice(3, 6).map((line, index) => (
+                      <div key={`matrix-right-${index}`} className={toneClass(line.tone)}>
+                        {line.text}
+                      </div>
+                    ))}
+                  </div>
+                  <motion.div
+                    className="mt-4 h-px bg-gradient-to-r from-transparent via-crimson-bright to-transparent"
+                    animate={{ x: ['-40%', '140%'] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+    }
+  }
+
   return (
     <AnimatePresence mode="wait">
       {isLoading && (
@@ -355,42 +518,7 @@ export default function PageTransition() {
           className="fixed inset-0 z-[100] pointer-events-none cursor-overlay"
         >
           {renderTransition()}
-
-          {/* Terminal display - common for all pages */}
-          <div className="absolute inset-0 flex items-center justify-center px-4 pointer-events-none">
-            <div className="w-full max-w-3xl">
-              <div className="text-xs md:text-sm code-font text-gray-500 tracking-wider mb-3">
-                {protocol}
-              </div>
-
-              <div className="relative border border-crimson/30 bg-[#0b0f14] p-5 md:p-6">
-                <div className="absolute inset-0 opacity-40 bg-[linear-gradient(transparent_0px,rgba(255,255,255,0.02)_1px,transparent_2px)] bg-[length:100%_6px]" />
-
-                <div className="relative space-y-1 text-xs md:text-sm code-font leading-5">
-                  <AnimatePresence>
-                    {visibleLines.map((line, index) => (
-                      <motion.div
-                        key={`${line.text}-${index}`}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className={toneClass(line.tone)}
-                      >
-                        {line.text}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-
-                <motion.div
-                  className="absolute left-4 right-4 h-px bg-gradient-to-r from-transparent via-crimson-bright to-transparent"
-                  animate={{ y: laserOffset }}
-                  transition={{ duration: 0.08, ease: 'linear' }}
-                />
-              </div>
-            </div>
-          </div>
+          {renderCenter()}
         </motion.div>
       )}
       <style>{`

@@ -5,18 +5,21 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 export default function GridBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [mouseActive, setMouseActive] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 })
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 })
+  const trailX = useSpring(mouseX, { stiffness: 120, damping: 22, mass: 0.4 })
+  const trailY = useSpring(mouseY, { stiffness: 120, damping: 22, mass: 0.4 })
+  const echoX = useSpring(mouseX, { stiffness: 60, damping: 26, mass: 0.6 })
+  const echoY = useSpring(mouseY, { stiffness: 60, damping: 26, mass: 0.6 })
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX)
       mouseY.set(e.clientY)
       setMousePosition({ x: e.clientX, y: e.clientY })
+      setMouseActive(true)
     }
 
     window.addEventListener('mousemove', handleMouseMove)
@@ -201,18 +204,36 @@ export default function GridBackground() {
         }}
       />
 
-      {/* Mouse hover reveal effect */}
+      {/* Cursor trail effect */}
       <motion.div
-        className="absolute rounded-full pointer-events-none mix-blend-screen"
+        className="absolute pointer-events-none mix-blend-screen"
         style={{
-          width: 300,
-          height: 300,
-          left: smoothX,
-          top: smoothY,
+          left: echoX,
+          top: echoY,
           x: '-50%',
           y: '-50%',
-          background: 'radial-gradient(circle, rgba(26, 40, 50, 0.4), transparent 70%)',
-          filter: 'blur(20px)'
+          width: 220,
+          height: 220,
+          opacity: mouseActive ? 0.15 : 0,
+          background: 'radial-gradient(circle, rgba(196, 30, 58, 0.12), transparent 70%)',
+          filter: 'blur(10px)',
+          borderRadius: '9999px',
+        }}
+      />
+      <motion.div
+        className="absolute pointer-events-none mix-blend-screen"
+        style={{
+          left: trailX,
+          top: trailY,
+          x: '-50%',
+          y: '-50%',
+          width: 140,
+          height: 140,
+          opacity: mouseActive ? 0.28 : 0,
+          background: 'radial-gradient(circle, rgba(196, 30, 58, 0.18), transparent 65%)',
+          filter: 'blur(6px)',
+          borderRadius: '9999px',
+          boxShadow: '0 0 12px rgba(196, 30, 58, 0.25)',
         }}
       />
 

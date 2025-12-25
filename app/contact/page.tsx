@@ -2,7 +2,16 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import DecryptText from '@/components/DecryptText'
+import GlitchText from '@/components/GlitchText'
+
+const contactGlitchPool = [
+  'ESTABLISHING.COMM_CHANNEL',
+  'E$T@BL!SH1NG.C0MM_CH@NNEL',
+  'ESTABLISHING.COMM_CHANNEL',
+  '3ST4BL1SH1NG.C0MM_CH4NN3L',
+]
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -14,10 +23,10 @@ export default function Contact() {
   })
 
   const [status, setStatus] = useState('')
-  const [glitchText, setGlitchText] = useState('ESTABLISHING.COMM_CHANNEL')
   const [systemStatus, setSystemStatus] = useState<'failing' | 'rerouting' | 'active'>('failing')
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
   const [cursorVisible, setCursorVisible] = useState(false)
+  const [cursorMounted, setCursorMounted] = useState(false)
   const [activeTab, setActiveTab] = useState<'transmit' | 'handshake'>('transmit')
   const [tunnelActive, setTunnelActive] = useState(true)
   const [tunnelProgress, setTunnelProgress] = useState(0)
@@ -57,22 +66,6 @@ export default function Contact() {
     }
   }, [])
 
-  // Random glitch effect on title
-  useEffect(() => {
-    const glitchMessages = [
-      'ESTABLISHING.COMM_CHANNEL',
-      'E$T@BL!SH1NG.C0MM_CH@NNEL',
-      'ESTABLISHING.COMM_CHANNEL',
-      '3ST4BL1SH1NG.C0MM_CH4NN3L'
-    ]
-
-    const interval = setInterval(() => {
-      setGlitchText(glitchMessages[Math.floor(Math.random() * glitchMessages.length)])
-    }, 3000)
-
-    return () => clearInterval(interval)
-  }, [])
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('[SUCCESS] Message queued for transmission...')
@@ -90,22 +83,39 @@ export default function Contact() {
     })
   }
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    setCursorPosition({ x: e.clientX, y: e.clientY })
-    if (!cursorVisible) {
+  // Track mouse movement at window level for better cursor tracking
+  useEffect(() => {
+    const handlePointerMove = (e: PointerEvent) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY })
       setCursorVisible(true)
     }
-  }
 
-  const handleMouseLeave = () => {
-    setCursorVisible(false)
-  }
+    const handlePointerLeave = () => {
+      setCursorVisible(false)
+    }
+
+    if (typeof window !== 'undefined') {
+      setCursorPosition({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
+      setCursorVisible(true)
+    }
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true })
+    window.addEventListener('pointerleave', handlePointerLeave)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerleave', handlePointerLeave)
+    }
+  }, [])
+
+  useEffect(() => {
+    setCursorMounted(true)
+  }, [])
 
   return (
+    <>
     <div
-      className="min-h-screen pt-16 overflow-hidden relative custom-cursor"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className="min-h-screen pt-16 overflow-hidden relative"
     >
       {/* Maintenance Warning Banner */}
       <AnimatePresence>
@@ -165,13 +175,12 @@ export default function Contact() {
             className="text-center mb-4"
           >
             <motion.h1
-              key={glitchText}
               className="text-3xl md:text-5xl font-bold mb-3 code-font text-crimson-bright"
               style={{
                 textShadow: systemStatus === 'failing' ? '2px 2px 8px rgba(255, 0, 0, 0.8)' : '0 0 10px rgba(196, 30, 58, 0.6)'
               }}
             >
-              {glitchText}
+              <GlitchText text="ESTABLISHING.COMM_CHANNEL" glitchPool={contactGlitchPool} />
             </motion.h1>
 
             {systemStatus === 'active' && (
@@ -484,37 +493,66 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Custom cursor */}
-      <motion.div
-        className="pointer-events-none fixed z-[60] w-8 h-8 border border-crimson-bright/60 rounded-full"
-        animate={{
-          x: cursorPosition.x - 16,
-          y: cursorPosition.y - 16,
-          opacity: cursorVisible ? 1 : 0,
-        }}
-        transition={{ type: 'spring', stiffness: 450, damping: 30 }}
-      />
-      <motion.div
-        className="pointer-events-none fixed z-[60] w-2 h-2 bg-crimson-bright rounded-full"
-        animate={{
-          x: cursorPosition.x - 4,
-          y: cursorPosition.y - 4,
-          opacity: cursorVisible ? 1 : 0,
-        }}
-        transition={{ type: 'spring', stiffness: 700, damping: 35 }}
-      />
-
-      {/* Custom cursor styles */}
-      <style jsx>{`
-        .custom-cursor {
-          cursor: none;
-        }
-        .custom-cursor input,
-        .custom-cursor textarea,
-        .custom-cursor button {
-          cursor: none;
-        }
-      `}</style>
     </div>
+
+    {cursorMounted && createPortal(
+      <>
+        {/* Main Cursor - Outer Ring */}
+        <motion.div
+          className="pointer-events-none fixed z-[2147483647] w-8 h-8 border border-crimson-bright/60 rounded-full"
+          style={{ isolation: 'isolate' }}
+          animate={{
+            x: cursorPosition.x - 16,
+            y: cursorPosition.y - 16,
+            opacity: cursorVisible ? 1 : 0,
+          }}
+          transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+        />
+
+        {/* Main Cursor - Rotating Inner Diamond */}
+        <motion.div
+          className="pointer-events-none fixed z-[2147483647] w-3 h-3 border border-crimson-bright"
+          style={{
+            isolation: 'isolate',
+            rotate: 45,
+            boxShadow: '0 0 12px rgba(196, 30, 58, 0.8)',
+          }}
+          animate={{
+            x: cursorPosition.x - 6,
+            y: cursorPosition.y - 6,
+            opacity: cursorVisible ? 1 : 0,
+            scale: cursorVisible ? [0.9, 1.1, 0.9] : 0.9,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 700,
+            damping: 35,
+            scale: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' },
+          }}
+        />
+
+        {/* Cursor Center Glow */}
+        <motion.div
+          className="pointer-events-none fixed z-[2147483647] w-1 h-1 bg-crimson-bright rounded-full"
+          style={{
+            isolation: 'isolate',
+            boxShadow: '0 0 8px rgba(196, 30, 58, 1)',
+          }}
+          animate={{
+            x: cursorPosition.x - 2,
+            y: cursorPosition.y - 2,
+            opacity: cursorVisible ? [0.8, 1, 0.8] : 0,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 800,
+            damping: 40,
+            opacity: { duration: 1, repeat: Infinity, ease: 'easeInOut' },
+          }}
+        />
+      </>,
+      document.body
+    )}
+    </>
   )
 }

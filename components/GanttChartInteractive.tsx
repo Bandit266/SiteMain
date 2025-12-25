@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion'
 import DecryptText from '@/components/DecryptText'
 import TaskModal from './TaskModal'
 import ganttData from '@/data/gantt-data.json'
@@ -35,6 +35,9 @@ export default function GanttChartInteractive() {
   const [viewMode, setViewMode] = useState<ViewMode>('3-months')
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [hoveredTask, setHoveredTask] = useState<string | null>(null)
+  const [scrollX, setScrollX] = useState(0)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   const tasks = ganttData.tasks as Task[]
   const categories = ganttData.categories
@@ -94,6 +97,25 @@ export default function GanttChartInteractive() {
     return colors.to
   }
 
+  // Handle horizontal drag/pan gestures for mobile
+  const handlePanStart = () => {
+    setIsDragging(true)
+  }
+
+  const handlePan = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (scrollContainerRef.current) {
+      const newScrollX = scrollX - info.delta.x
+      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
+      const clampedScroll = Math.max(0, Math.min(newScrollX, maxScroll))
+      setScrollX(clampedScroll)
+      scrollContainerRef.current.scrollLeft = clampedScroll
+    }
+  }
+
+  const handlePanEnd = () => {
+    setIsDragging(false)
+  }
+
   return (
     <div className="w-full">
       {/* Header */}
@@ -141,9 +163,9 @@ export default function GanttChartInteractive() {
       {/* Legend */}
       <div className="flex flex-wrap gap-3 sm:gap-4 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-crimson/10">
         {Object.entries(categories).map(([key, cat]) => (
-          <div key={key} className="flex items-center gap-2 code-font text-[10px] sm:text-xs">
+          <div key={key} className="flex items-center gap-2 code-font text-xs sm:text-sm">
             <div
-              className="w-3 h-3"
+              className="w-3 h-3 sm:w-4 sm:h-4"
               style={{
                 background: getCategoryGradient(key),
                 boxShadow: `0 0 4px ${getCategoryColor(key)}40`
@@ -154,19 +176,38 @@ export default function GanttChartInteractive() {
         ))}
       </div>
 
-      {/* Gantt Chart Container with custom scrollbar */}
-      <div className="overflow-x-auto gantt-scrollbar">
-        <div className="min-w-[680px] sm:min-w-[800px] bg-[#0a0e14] p-4 sm:p-6 border border-crimson/10 bg-[radial-gradient(circle_at_20%_0%,rgba(120,255,255,0.12),transparent_55%)]">
+      {/* Mobile Scroll Hint */}
+      <div className="md:hidden mb-3 p-2 bg-crimson/10 border border-crimson/30 code-font text-xs text-gray-400 flex items-center gap-2">
+        <motion.div
+          animate={{ x: [-5, 5, -5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-crimson-bright"
+        >
+          ◀▶
+        </motion.div>
+        <span>Swipe left/right to pan timeline</span>
+      </div>
+
+      {/* Gantt Chart Container with custom scrollbar and pan support */}
+      <motion.div
+        ref={scrollContainerRef}
+        className="overflow-x-auto overflow-y-visible gantt-scrollbar"
+        onPanStart={handlePanStart}
+        onPan={handlePan}
+        onPanEnd={handlePanEnd}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      >
+        <div className="min-w-[600px] sm:min-w-[800px] bg-[#0a0e14] p-3 sm:p-6 border border-crimson/10 bg-[radial-gradient(circle_at_20%_0%,rgba(120,255,255,0.12),transparent_55%)]">
           {/* Timeline Header */}
           <div className="flex mb-2">
-            <div className="w-44 sm:w-56 lg:w-64 flex-shrink-0" />
+            <div className="w-24 sm:w-32 md:w-56 lg:w-64 flex-shrink-0" />
             <div className="flex-1 flex bg-[#0f1419]">
               {monthColumns.map((col, idx) => (
                 <div
                   key={idx}
                   className="flex-1 text-center border-l border-[#1a2832] code-font py-1.5 sm:py-2"
                 >
-                  <div className="text-[10px] sm:text-xs text-gray-600 font-semibold tracking-wider">
+                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-600 font-semibold tracking-wider">
                     {col.month.toUpperCase()}.{col.year}
                   </div>
                 </div>
@@ -175,7 +216,7 @@ export default function GanttChartInteractive() {
           </div>
 
           {/* Tasks */}
-          <div className="space-y-0.5 sm:space-y-1">
+          <div className="space-y-0.5 sm:space-y-1 overflow-visible">
             {tasks.map((task, idx) => {
               const categoryColor = getCategoryColor(task.category)
               const categoryGradient = getCategoryGradient(task.category)
@@ -191,20 +232,20 @@ export default function GanttChartInteractive() {
                   className="flex items-center group hover:bg-[#0f1419]/30 transition-colors"
                 >
                   {/* Task Name */}
-                  <div className="w-44 sm:w-56 lg:w-64 flex-shrink-0 pr-3 sm:pr-4 py-1.5 sm:py-2">
-                    <div className="flex items-center gap-2">
+                  <div className="w-24 sm:w-32 md:w-56 lg:w-64 flex-shrink-0 pr-1 sm:pr-2 md:pr-4 py-1.5 sm:py-2">
+                    <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
                       <div
-                        className="w-1 h-6"
+                        className="w-0.5 sm:w-0.5 md:w-1 h-4 sm:h-5 md:h-6"
                         style={{ background: categoryGradient }}
                       />
-                      <span className="text-xs sm:text-sm text-gray-400 group-hover:text-gray-300 transition-colors code-font truncate">
+                      <span className="text-[9px] sm:text-[11px] md:text-sm text-gray-400 group-hover:text-gray-300 transition-colors code-font truncate leading-tight">
                         {task.name}
                       </span>
                     </div>
                   </div>
 
                   {/* Timeline Bar */}
-                  <div className="flex-1 relative h-7 sm:h-9 md:h-10 border-l border-[#1a2832]">
+                  <div className="flex-1 relative h-8 sm:h-9 md:h-11 lg:h-12 border-l border-[#1a2832]">
                     {/* Month separators */}
                     {monthColumns.map((_, idx) => (
                       <div
@@ -216,11 +257,13 @@ export default function GanttChartInteractive() {
 
                     {/* Task Bar */}
                     <motion.div
-                      className="absolute top-1/2 -translate-y-1/2 h-5 sm:h-6 md:h-7 cursor-pointer shadow-[0_0_12px_rgba(120,255,255,0.12)]"
+                      className="absolute top-1/2 -translate-y-1/2 h-4 sm:h-5 md:h-6 lg:h-7 cursor-pointer shadow-[0_0_12px_rgba(120,255,255,0.12)] touch-manipulation"
                       style={style}
-                      onMouseEnter={() => setHoveredTask(task.id)}
+                      onMouseEnter={() => !isDragging && setHoveredTask(task.id)}
                       onMouseLeave={() => setHoveredTask(null)}
-                      onClick={() => setSelectedTask(task)}
+                      onTouchStart={() => setHoveredTask(task.id)}
+                      onTouchEnd={() => setHoveredTask(null)}
+                      onClick={() => !isDragging && setSelectedTask(task)}
                       whileHover={{ scaleY: 1.15 }}
                       transition={{ duration: 0.2 }}
                     >
@@ -301,7 +344,7 @@ export default function GanttChartInteractive() {
                       {/* Progress Text */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span
-                          className="text-[10px] sm:text-xs font-bold code-font"
+                          className="text-[8px] sm:text-[10px] md:text-xs font-bold code-font"
                           style={{
                             color: task.progress > 50 ? '#fff' : categoryColor,
                             textShadow: '0 1px 2px rgba(0,0,0,0.8)'
@@ -320,7 +363,7 @@ export default function GanttChartInteractive() {
           {/* Current Date Indicator */}
           <div className="relative mt-6">
             <div className="flex">
-              <div className="w-44 sm:w-56 lg:w-64 flex-shrink-0" />
+              <div className="w-24 sm:w-32 md:w-56 lg:w-64 flex-shrink-0" />
               <div className="flex-1 relative h-2">
                 <motion.div
                   className="absolute top-0 left-0 w-px h-full bg-crimson-bright"
@@ -328,7 +371,7 @@ export default function GanttChartInteractive() {
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-crimson-bright text-black text-[10px] code-font whitespace-nowrap font-bold">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-1.5 sm:px-2 py-0.5 bg-crimson-bright text-black text-[8px] sm:text-[10px] code-font whitespace-nowrap font-bold">
                     TODAY
                   </div>
                 </motion.div>
@@ -336,7 +379,7 @@ export default function GanttChartInteractive() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Statistics */}
       <div className="mt-6 hidden md:grid md:grid-cols-4 gap-4">
